@@ -61,9 +61,9 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $attemp = !(Auth::attempt($request->only(['email', 'password']), false, false));
+            $attempt = !(Auth::attempt($request->only(['email', 'password']), false, false));
     
-            if($attemp) {
+            if($attempt) {
                 return response()->json([
                     'message' => 'E-mail e senha não conferem'
                 ], 401);
