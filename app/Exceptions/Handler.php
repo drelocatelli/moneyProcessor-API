@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,5 +47,19 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function unauthenticated($request, AuthenticationException $exception)
+    {
+
+        $unauthenticated = 'Você não tem permissões pra fazer isso.';
+
+        if ($request->expectsJson()) {
+            return response()->json(['error' => $unauthenticated], 401);
+        }
+        if ($exception->getMessage() === 'Unauthenticated.') {
+            return response()->json(['error' => $unauthenticated], 401);
+        }
+        return redirect()->guest(route('login'));
     }
 }
