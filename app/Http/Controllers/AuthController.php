@@ -61,7 +61,7 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $attempt = !(Auth::attempt($request->only(['email', 'password']), false, false));
+            $attempt = !(Auth::attempt($request->only(['email', 'password']), false));
     
             if($attempt) {
                 return response()->json([

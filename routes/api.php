@@ -30,6 +30,6 @@ Route::controller(AuthController::class)->prefix('/auth')->group(function() {
  * 
  */
 Route::middleware(['auth:sanctum'])->controller(UserController::class)->prefix('/user')->group(function () {
-    Route::get('/details', 'index');
+    Route::get('/', 'index');
     Route::put('/edit', 'edit');
 });
