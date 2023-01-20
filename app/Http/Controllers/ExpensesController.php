@@ -62,7 +62,7 @@ class ExpensesController extends Controller
     public function update()
     {
         $validator = Validator::make(Request::all(),[
-            'id' => 'string|required',
+            'id' => 'required',
             'title' => 'nullable',
             'total' => 'numeric|nullable'
         ]);
@@ -82,7 +82,7 @@ class ExpensesController extends Controller
             $data = $this->expenses
                     ->where('id', Request::get('id'))->first();
                         
-            return response()->json($data);
+            return response()->json(['message' => 'Despesa alterada!', 'data' => $data]);
         } catch(\Throwable $err) {
             return response()->json([
                 'message' => $err->getMessage()
@@ -93,6 +93,33 @@ class ExpensesController extends Controller
 
     public function delete()
     {
+        $validator = Validator::make(Request::all(), [
+            'id' => 'required'
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(['message' => 'Não foi possível deletar despesa', 'errors' => $validator->errors()], 401);
+        }
+
+        try {
+
+            $find = $this->expenses
+                ->where('id', Request::get('id'))
+                ->first();
+
+            if($find) {
+                $this->expenses
+                    ->where('id', Request::get('id'))->delete();
+            } else {
+                throw new Exception('Essa despesa não existe');
+            }
+
+            return response()->json(['message' => 'Despesa deletada!'], 200);
+        } catch(\Throwable $err) {
+            return response()->json([
+                'message' => $err->getMessage()
+            ], 500);
+        }
         
     }
 }
