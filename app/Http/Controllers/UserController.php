@@ -20,15 +20,16 @@ class UserController extends Controller
     public function update() 
     {
         $validator = Validator::make(Request::all(), [
-            'password' => 'required',
-            'new_password' => 'required',
-            'email' => 'required|email'
+            'password' => 'string',
+            'new_password' => 'string',
+            'email' => 'email',
+            'salary' => 'numeric'
         ]);
         
-        $errorMsg = response()->json(['message' => 'Não foi possível atualizar os dados'] , 401);
+        $errorMsg = 'Não foi possível atualizar os dados';
 
         if($validator->fails()) {
-            return $errorMsg;
+            return response()->json(['mesage' => $errorMsg, 'errors' => $validator->errors()], 401);
         }
 
         try {
@@ -36,13 +37,16 @@ class UserController extends Controller
             $validateUser = Hash::check(Request('password'), $user->password);
     
             if($validateUser) {
-                $user->password = Hash::make(Request::get('new_password'));
+                $user->salary = Request::get('salary') ?: $user->salary;
+                if(Request::get('new_password')) {
+                    $user->password = Hash::make(Request::get('new_password'));
+                }
                 $user->save();
     
                 return response()->json(['message' => 'Dados atualizados com sucesso.'], 200);
     
             } else {
-                return $errorMsg;
+                return response()->json(['mesage' => "$errorMsg. Senha inválida"], 401);
             }
 
         } catch(\Throwable $th) {
