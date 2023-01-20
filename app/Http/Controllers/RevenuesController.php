@@ -67,7 +67,7 @@ class RevenuesController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Não foi possível alterar despesa', 'errors' => $validator->errors()], 401);
+            return response()->json(['message' => 'Não foi possível alterar receita', 'errors' => $validator->errors()], 401);
         }
         try {
 
@@ -81,7 +81,7 @@ class RevenuesController extends Controller
             $data = $this->revenues
                     ->where('id', Request::get('id'))->first();
                         
-            return response()->json(['message' => 'Despesa alterada!', 'data' => $data]);
+            return response()->json(['message' => 'Receita alterada!', 'data' => $data]);
         } catch(\Throwable $err) {
             return response()->json([
                 'message' => $err->getMessage()
@@ -97,7 +97,7 @@ class RevenuesController extends Controller
         ]);
 
         if($validator->fails()) {
-            return response()->json(['message' => 'Não foi possível deletar despesa', 'errors' => $validator->errors()], 401);
+            return response()->json(['message' => 'Não foi possível deletar receita', 'errors' => $validator->errors()], 401);
         }
 
         try {
@@ -110,10 +110,10 @@ class RevenuesController extends Controller
                 $this->revenues
                     ->where('id', Request::get('id'))->delete();
             } else {
-                throw new Exception('Essa despesa não existe');
+                throw new Exception('Essa receita não existe');
             }
 
-            return response()->json(['message' => 'Despesa deletada!'], 200);
+            return response()->json(['message' => 'Receita deletada!'], 200);
         } catch(\Throwable $err) {
             return response()->json([
                 'message' => $err->getMessage()
