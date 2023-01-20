@@ -23,7 +23,7 @@ class RevenuesController extends Controller
     {
 
         $userId = Auth::id();
-        $revenues = $this->revenues->where('user_id', $userId)->simplePaginate(15);
+        $revenues = $this->revenues->where('user_id', $userId)->orderBy('created_at', 'desc')->simplePaginate(15);
         
         return response()->json($revenues);
     }

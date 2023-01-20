@@ -24,7 +24,7 @@ class ExpensesController extends Controller
     {
 
         $userId = Auth::id();
-        $expenses = Expenses::where('user_id', $userId)->simplePaginate(15);
+        $expenses = Expenses::where('user_id', $userId)->orderBy('created_at', 'desc')->simplePaginate(15);
         
         return response()->json($expenses);
     }
