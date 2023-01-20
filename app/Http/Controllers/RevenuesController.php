@@ -37,7 +37,7 @@ class RevenuesController extends Controller
         ]);
 
         if($validate->fails()) {
-            return response()->json(['message' => 'Não foi possível cadastrar despesa', 'errors' => $validate->errors()], 422);
+            return response()->json(['message' => 'Não foi possível cadastrar receita', 'errors' => $validate->errors()], 422);
         }
 
         $data = [
@@ -49,7 +49,7 @@ class RevenuesController extends Controller
 
             $this->revenues->create($data);
 
-            return response()->json(['message' => 'despesa cadastrada'], 201);
+            return response()->json(['message' => 'receita cadastrada'], 201);
         } catch(\Throwable $err) {
             return response()->json([
                 'message' => $err->getMessage()
