@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Revenue;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Expenses extends Model
+class Revenue extends Model
 {
     use HasFactory;
 
-    protected $table = 'expenses';
+    protected $table = 'revenues';
 
     protected $keyType = 'string';
     protected $primaryKey = 'id';
@@ -37,5 +37,4 @@ class Expenses extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
 }

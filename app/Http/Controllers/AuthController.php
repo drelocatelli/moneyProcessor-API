@@ -3,21 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Request;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register()
     {
 
         try {
-            $validateUser = Validator::make($request->all(), [
+            $validateUser = Validator::make(Request::all(), [
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required'
+                'password' => 'required',
+                'repeat_password' => 'required'
             ]);
 
             if($validateUser->fails()) {
@@ -27,10 +28,16 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            if(Request::get('repeat_password') !== Request::get('password')) {
+                return response()->json([
+                    'message' => 'Senhas não conferem.'
+                ]);
+            }
+
             $user = User::create([
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make($request->get('password'))
+                'name' => Request::get('name'),
+                'email' => Request::get('email'),
+                'password' => Hash::make(Request::get('password'))
             ]);
 
             return response()->json([
@@ -45,11 +52,11 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $request) 
+    public function login() 
     {
         
         try {
-            $validateUser = Validator::make($request->all(), [
+            $validateUser = Validator::make(Request::all(), [
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
@@ -61,7 +68,7 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $attempt = !(Auth::attempt($request->only(['email', 'password']), false));
+            $attempt = !(Auth::attempt(Request::only(['email', 'password']), false));
     
             if($attempt) {
                 return response()->json([
@@ -69,7 +76,7 @@ class AuthController extends Controller
                 ], 401);
             }
     
-            $user = User::where('email', $request->get('email'))->first();
+            $user = User::where('email', Request::get('email'))->first();
             return response()->json([
                 'message' => 'Usuário autenticado',
                 'token' => $user->createToken('API TOKEN')->plainTextToken

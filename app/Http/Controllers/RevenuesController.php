@@ -2,31 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Expenses\Expenses;
-use App\Models\User;
-use Illuminate\Support\Collection;
+use App\Models\Revenue\Revenue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Request;
 use TheSeer\Tokenizer\Exception;
+use Request;
 
-class ExpensesController extends Controller
+
+class RevenuesController extends Controller
 {
-
-    private $expenses;
     
-    public function __construct(Expenses $expenses) {
-        $this->expenses = $expenses;
+    private $revenues;
+    
+    public function __construct(Revenue $revenues) {
+        $this->revenues = $revenues;
     }
     
     public function index()
     {
 
         $userId = Auth::id();
-        $expenses = Expenses::where('user_id', $userId)->simplePaginate(15);
+        $revenues = $this->revenues->where('user_id', $userId)->simplePaginate(15);
         
-        return response()->json($expenses);
+        return response()->json($revenues);
     }
 
     public function create()
@@ -48,7 +47,7 @@ class ExpensesController extends Controller
 
         try {
 
-            $this->expenses->create($data);
+            $this->revenues->create($data);
 
             return response()->json(['message' => 'despesa cadastrada'], 201);
         } catch(\Throwable $err) {
@@ -72,14 +71,14 @@ class ExpensesController extends Controller
         }
         try {
 
-            $this->expenses
+            $this->revenues
                 ->where('id', Request::get('id'))
                 ->update([
                     'id' => Request::get('id'),
                     'title' => Request::get('title') ?: DB::raw('title'),
                     'total' => Request::get('total') ?: DB::raw('total'),
                 ]);
-            $data = $this->expenses
+            $data = $this->revenues
                     ->where('id', Request::get('id'))->first();
                         
             return response()->json(['message' => 'Despesa alterada!', 'data' => $data]);
@@ -103,12 +102,12 @@ class ExpensesController extends Controller
 
         try {
 
-            $find = $this->expenses
+            $find = $this->revenues
                 ->where('id', Request::get('id'))
                 ->first();
 
             if($find) {
-                $this->expenses
+                $this->revenues
                     ->where('id', Request::get('id'))->delete();
             } else {
                 throw new Exception('Essa despesa não existe');

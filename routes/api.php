@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\RevenuesController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +40,17 @@ Route::middleware(['auth:sanctum'])->controller(UserController::class)->prefix('
  * 
  */
 Route::middleware(['auth:sanctum'])->controller(ExpensesController::class)->prefix('/expenses')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/create', 'create');
+    Route::put('/update', 'update');
+    Route::delete('/delete', 'delete');
+ });
+
+ /**
+ *  REVENUES 
+ * 
+ */
+Route::middleware(['auth:sanctum'])->controller(RevenuesController::class)->prefix('/revenues')->group(function () {
     Route::get('/', 'index');
     Route::post('/create', 'create');
     Route::put('/update', 'update');
