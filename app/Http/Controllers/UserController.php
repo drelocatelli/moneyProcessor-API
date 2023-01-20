@@ -17,7 +17,7 @@ class UserController extends Controller
         return Auth::user();
     }
 
-    public function edit() 
+    public function update() 
     {
         $validator = Validator::make(Request::all(), [
             'password' => 'required',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,5 +32,16 @@ Route::controller(AuthController::class)->prefix('/auth')->group(function() {
  */
 Route::middleware(['auth:sanctum'])->controller(UserController::class)->prefix('/user')->group(function () {
     Route::get('/', 'index');
-    Route::put('/edit', 'edit');
+    Route::put('/update', 'update');
 });
+
+/**
+ *  EXPENSES 
+ * 
+ */
+Route::middleware(['auth:sanctum'])->controller(ExpensesController::class)->prefix('/expenses')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/create', 'create');
+    Route::put('/update', 'update');
+    Route::delete('/delete', 'delete');
+ });
