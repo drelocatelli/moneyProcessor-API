@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Expenses;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Request;
+use TheSeer\Tokenizer\Exception;
 
 class ExpensesController extends Controller
 {
@@ -26,10 +29,10 @@ class ExpensesController extends Controller
         return response()->json($expenses);
     }
 
-    public function create(Request $request)
+    public function create()
     {
         
-        $validate = Validator::make($request->all(), [
+        $validate = Validator::make(Request::all(), [
             'title' => 'required',
             'total' => 'required|numeric'
         ]);
@@ -42,8 +45,6 @@ class ExpensesController extends Controller
             'user_id' => Auth::id(),
             ...$validate->validated()
         ];
-
-        // return response()->json($data);
 
         try {
 
@@ -60,6 +61,33 @@ class ExpensesController extends Controller
 
     public function update()
     {
+        $validator = Validator::make(Request::all(),[
+            'id' => 'string|required',
+            'title' => 'nullable',
+            'total' => 'numeric|nullable'
+        ]);
+
+        if($validator->fails()) {
+            return response()->json(['message' => 'Não foi possível alterar despesa', 'errors' => $validator->errors()], 401);
+        }
+        try {
+
+            $this->expenses
+                ->where('id', Request::get('id'))
+                ->update([
+                    'id' => Request::get('id'),
+                    'title' => Request::get('title') ?: DB::raw('title'),
+                    'total' => Request::get('total') ?: DB::raw('total'),
+                ]);
+            $data = $this->expenses
+                    ->where('id', Request::get('id'))->first();
+                        
+            return response()->json($data);
+        } catch(\Throwable $err) {
+            return response()->json([
+                'message' => $err->getMessage()
+            ], 500);
+        }
         
     }
 
