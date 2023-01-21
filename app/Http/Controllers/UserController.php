@@ -42,8 +42,16 @@ class UserController extends Controller
                     $user->password = Hash::make(Request::get('new_password'));
                 }
                 $user->save();
+
+                $data = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'salary' => $user->salary,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at
+                ];
     
-                return response()->json(['message' => 'Dados atualizados com sucesso.'], 200);
+                return response()->json(['message' => 'Dados atualizados com sucesso.', 'data' => $data], 200);
     
             } else {
                 return response()->json(['mesage' => "$errorMsg. Senha inválida"], 401);

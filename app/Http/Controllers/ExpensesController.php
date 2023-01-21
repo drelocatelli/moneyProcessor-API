@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expenses\Expenses;
-use App\Models\User;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;

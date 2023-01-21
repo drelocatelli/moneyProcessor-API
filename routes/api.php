@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\RevenuesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -56,3 +57,11 @@ Route::middleware(['auth:sanctum'])->controller(RevenuesController::class)->pref
     Route::put('/update', 'update');
     Route::delete('/delete', 'delete');
  });
+
+/**
+ *  RESUME 
+ * 
+ */
+Route::middleware(['auth:sanctum'])->controller(ResumeController::class)->prefix('/resume')->group(function () {
+    Route::get('/', 'index');
+});
