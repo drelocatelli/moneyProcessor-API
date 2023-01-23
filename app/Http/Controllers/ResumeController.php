@@ -26,6 +26,10 @@ class ResumeController extends Controller
         }
         
         $salary = User::where('id', Auth::id())->first()->salary;
+
+        if($salary == 0) {
+            return response()->json(['message' => 'Informe o salário maior que zero.']);
+        }
         
         $expenses = $expenses->get();
         $revenues = $revenues->get();
@@ -58,13 +62,15 @@ class ResumeController extends Controller
         ];
 
         $balance = $salary + $revenue - $expense;
+        $max = floor($salary / 3);
 
         $data = [
             'salary' => $salary,
+            'requested_date' => $requestedDate,
             'expenses' => $expenseArr,
             'revenues' => $revenueArr,
             'balance' => $balance,
-            'requested_date' => $requestedDate
+            'max' => $max
         ];
 
         return response()->json(['data' => $data]);
