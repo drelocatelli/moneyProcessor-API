@@ -20,16 +20,17 @@ use Illuminate\Support\Facades\Route;
 
 /**
  *  USER AUTHENTICATION
- * 
+ *
  */
-Route::controller(AuthController::class)->prefix('/auth')->group(function() {
-    Route::post('/register', 'register');
-    Route::post('/login', 'login');
-});
+Route::controller(AuthController::class)
+    ->prefix('/auth')->group(function () {
+        Route::post('/register', 'register')->name('auth-register');
+        Route::post('/login', 'login')->name('auth-login');
+    });
 
 /**
- *  USER 
- * 
+ *  USER
+ *
  */
 Route::middleware(['auth:sanctum'])->controller(UserController::class)->prefix('/user')->group(function () {
     Route::get('/', 'index');
@@ -37,30 +38,30 @@ Route::middleware(['auth:sanctum'])->controller(UserController::class)->prefix('
 });
 
 /**
- *  EXPENSES 
- * 
+ *  EXPENSES
+ *
  */
-Route::middleware(['auth:sanctum'])->controller(ExpensesController::class)->prefix('/expenses')->group(function () {
-    Route::get('/', 'index');
-    Route::post('/create', 'create');
+Route::middleware(['auth:sanctum'])->controller(ExpensesController::class)->prefix('expenses')->group(function () {
+    Route::get('/', 'index')->name('expenses.index');
+    Route::post('/create', 'create')->name('expenses.create');
     Route::put('/update', 'update');
     Route::delete('/delete', 'delete');
- });
+});
 
- /**
- *  REVENUES 
- * 
+/**
+ *  REVENUES
+ *
  */
 Route::middleware(['auth:sanctum'])->controller(RevenuesController::class)->prefix('/revenues')->group(function () {
     Route::get('/', 'index');
     Route::post('/create', 'create');
     Route::put('/update', 'update');
     Route::delete('/delete', 'delete');
- });
+});
 
 /**
- *  RESUME 
- * 
+ *  RESUME
+ *
  */
 Route::middleware(['auth:sanctum'])->controller(ResumeController::class)->prefix('/resume')->group(function () {
     Route::get('/', 'index');
