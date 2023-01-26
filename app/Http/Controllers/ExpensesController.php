@@ -2,70 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Expenses\CreateExpenseRequest;
 use App\Models\Expenses\Expenses;
+use App\Repositories\ExpenseRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Request;
+use Symfony\Component\HttpFoundation\Response;
 use TheSeer\Tokenizer\Exception;
 
 class ExpensesController extends Controller
 {
 
-    private $expenses;
-    
-    public function __construct(Expenses $expenses) {
-        $this->expenses = $expenses;
-    }
-    
-    public function index()
-    {
 
-        $userId = Auth::id();
-        $expenses = Expenses::where('user_id', $userId)->orderBy('created_at', 'desc')->simplePaginate(15);
-        
-        return response()->json($expenses);
+    public function __construct(
+        private ExpenseRepository $repository,
+        private Expenses          $expenses
+    )
+    {
     }
 
-    public function create()
+    public function index(): JsonResponse
     {
-        
-        $validate = Validator::make(Request::all(), [
-            'title' => 'required',
-            'total' => 'required|numeric'
-        ]);
+        return response()->json($this->repository->paginateByUserId(Auth::id()));
+    }
 
-        if($validate->fails()) {
-            return response()->json(['message' => 'Não foi possível cadastrar despesa', 'errors' => $validate->errors()], 422);
-        }
+    public function create(CreateExpenseRequest $request)
+    {
+        $this->repository->create(Auth::id(), $request->validated());
 
-        $data = [
-            'user_id' => Auth::id(),
-            ...$validate->validated()
-        ];
-
-        try {
-
-            $this->expenses->create($data);
-
-            return response()->json(['message' => 'despesa cadastrada'], 201);
-        } catch(\Throwable $err) {
-            return response()->json([
-                'message' => $err->getMessage()
-            ], 500);
-        }
-
+        return response()->json(['message' => 'despesa cadastrada'], Response::HTTP_CREATED);
     }
 
     public function update()
     {
-        $validator = Validator::make(Request::all(),[
+        $validator = Validator::make(Request::all(), [
             'id' => 'required',
             'title' => 'nullable',
             'total' => 'numeric|nullable'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json(['message' => 'Não foi possível alterar despesa', 'errors' => $validator->errors()], 401);
         }
         try {
@@ -78,15 +57,15 @@ class ExpensesController extends Controller
                     'total' => Request::get('total') ?: DB::raw('total'),
                 ]);
             $data = $this->expenses
-                    ->where('id', Request::get('id'))->first();
-                        
+                ->where('id', Request::get('id'))->first();
+
             return response()->json(['message' => 'Despesa alterada!', 'data' => $data]);
-        } catch(\Throwable $err) {
+        } catch (\Throwable $err) {
             return response()->json([
                 'message' => $err->getMessage()
             ], 500);
         }
-        
+
     }
 
     public function delete()
@@ -95,7 +74,7 @@ class ExpensesController extends Controller
             'id' => 'required'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json(['message' => 'Não foi possível deletar despesa', 'errors' => $validator->errors()], 401);
         }
 
@@ -105,7 +84,7 @@ class ExpensesController extends Controller
                 ->where('id', Request::get('id'))
                 ->first();
 
-            if($find) {
+            if ($find) {
                 $this->expenses
                     ->where('id', Request::get('id'))->delete();
             } else {
@@ -113,11 +92,11 @@ class ExpensesController extends Controller
             }
 
             return response()->json(['message' => 'Despesa deletada!'], 200);
-        } catch(\Throwable $err) {
+        } catch (\Throwable $err) {
             return response()->json([
                 'message' => $err->getMessage()
             ], 500);
         }
-        
+
     }
 }

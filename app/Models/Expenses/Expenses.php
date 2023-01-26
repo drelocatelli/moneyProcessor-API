@@ -2,8 +2,10 @@
 
 namespace App\Models\Expenses;
 
+use Database\Factories\ExpensesFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Expenses extends Model
@@ -32,10 +34,14 @@ class Expenses extends Model
             $model->{$model->getKeyName()} = (string) Str::uuid();
         });
     }
-    
-    public function users()
+
+    public function users(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    
+
+    protected static function newFactory(): ExpensesFactory
+    {
+        return ExpensesFactory::new();
+    }
 }
