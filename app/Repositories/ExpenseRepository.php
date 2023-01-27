@@ -28,10 +28,11 @@ class ExpenseRepository
             ->create($payload);
     }
 
-    public function update(string $id, array $payload)
+    public function update(string $userId, string $id, array $payload)
     {
         return $this->model
-                ->where('user_id', $id)
+                ->where('user_id', $userId)
+                ->where('id', $id)
                 ->update($payload);
     }
 

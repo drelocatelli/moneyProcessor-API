@@ -3,7 +3,7 @@ namespace App\Http\Requests\Revenues;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRevenueRequest extends FormRequest
+class UpdateRevenueRequest extends FormRequest
 {
 
     public function authorize() : bool

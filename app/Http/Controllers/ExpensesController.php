@@ -27,14 +27,14 @@ class ExpensesController extends Controller
 
     public function create(CreateExpenseRequest $request)
     {
-        $data = $this->repository->create(Auth::id(), $request->validated());
+        $this->repository->create(Auth::id(), $request->validated());
 
-        return response()->json(['message' => 'despesa cadastrada', 'data' => $data], Response::HTTP_CREATED);
+        return response()->json(['message' => 'despesa cadastrada'], Response::HTTP_CREATED);
     }
 
     public function update(UpdateExpenseRequest $request)
     {
-        $this->repository->update(Auth::id(), $request->validated());
+        $this->repository->update(Auth::id(), $request->get('id'),$request->validated());
 
         return response()->json(['message' => 'despesa atualizada']);
     }

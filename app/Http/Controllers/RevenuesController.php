@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Revenues\CreateRevenueRequest;
+use App\Http\Requests\Revenues\DeleteRevenueRequest;
+use App\Http\Requests\Revenues\UpdateRevenueRequest;
 use App\Models\Revenue\Revenue;
-use CreateRevenueRequest;
+use App\Repositories\RevenueRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use RevenueRepository;
 use TheSeer\Tokenizer\Exception;
 use Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,67 +37,17 @@ class RevenuesController extends Controller
         return response()->json(['message' => 'receita cadastrada'], Response::HTTP_CREATED);
     }
 
-    public function update()
+    public function update(UpdateRevenueRequest $request)
     {
-        $validator = Validator::make(Request::all(),[
-            'id' => 'required',
-            'title' => 'nullable',
-            'total' => 'numeric|nullable'
-        ]);
+        $this->repository->update(Auth::id(), $request->get('id'), $request->validated());
 
-        if($validator->fails()) {
-            return response()->json(['message' => 'Não foi possível alterar receita', 'errors' => $validator->errors()], 401);
-        }
-        try {
-
-            $this->revenues
-                ->where('id', Request::get('id'))
-                ->update([
-                    'id' => Request::get('id'),
-                    'title' => Request::get('title') ?: DB::raw('title'),
-                    'total' => Request::get('total') ?: DB::raw('total'),
-                ]);
-            $data = $this->revenues
-                    ->where('id', Request::get('id'))->first();
-                        
-            return response()->json(['message' => 'Receita alterada!', 'data' => $data]);
-        } catch(\Throwable $err) {
-            return response()->json([
-                'message' => $err->getMessage()
-            ], 500);
-        }
-        
+        return response()->json(['message' => 'receita atualizada']);
     }
 
-    public function delete()
+    public function delete(DeleteRevenueRequest $request)
     {
-        $validator = Validator::make(Request::all(), [
-            'id' => 'required'
-        ]);
+        $this->repository->delete(Auth::id(), $request->get('id'));
 
-        if($validator->fails()) {
-            return response()->json(['message' => 'Não foi possível deletar receita', 'errors' => $validator->errors()], 401);
-        }
-
-        try {
-
-            $find = $this->revenues
-                ->where('id', Request::get('id'))
-                ->first();
-
-            if($find) {
-                $this->revenues
-                    ->where('id', Request::get('id'))->delete();
-            } else {
-                throw new Exception('Essa receita não existe');
-            }
-
-            return response()->json(['message' => 'Receita deletada!'], 200);
-        } catch(\Throwable $err) {
-            return response()->json([
-                'message' => $err->getMessage()
-            ], 500);
-        }
-        
+        return response()->json(['message' => 'receita deletada']);
     }
 }

@@ -3,7 +3,7 @@ namespace App\Http\Requests\Revenues;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRevenueRequest extends FormRequest
+class DeleteRevenueRequest extends FormRequest
 {
 
     public function authorize() : bool
@@ -14,8 +14,7 @@ class CreateRevenueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required',
-            'total' => 'required|numeric'
+            'id' => 'required',
         ];
     }
     
