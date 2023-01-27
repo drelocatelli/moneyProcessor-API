@@ -3,59 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Revenue\Revenue;
+use CreateRevenueRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use RevenueRepository;
 use TheSeer\Tokenizer\Exception;
 use Request;
-
+use Symfony\Component\HttpFoundation\Response;
 
 class RevenuesController extends Controller
 {
     
-    private $revenues;
-    
-    public function __construct(Revenue $revenues) {
-        $this->revenues = $revenues;
+    public function __construct(
+        private RevenueRepository $repository,
+        private Revenue           $revenue
+    ) {
     }
     
-    public function index()
+    public function index(): JsonResponse
     {
 
-        $userId = Auth::id();
-        $revenues = $this->revenues->where('user_id', $userId)->orderBy('created_at', 'desc')->simplePaginate(15);
-        
-        return response()->json($revenues);
+        return response()->json($this->repository->paginateByUserId(Auth::id()));
     }
 
-    public function create()
+    public function create(CreateRevenueRequest $request)
     {
-        
-        $validate = Validator::make(Request::all(), [
-            'title' => 'required',
-            'total' => 'required|numeric'
-        ]);
+        $this->repository->create(Auth::id(), $request->validated());
 
-        if($validate->fails()) {
-            return response()->json(['message' => 'Não foi possível cadastrar receita', 'errors' => $validate->errors()], 422);
-        }
-
-        $data = [
-            'user_id' => Auth::id(),
-            ...$validate->validated()
-        ];
-
-        try {
-
-            $this->revenues->create($data);
-
-            return response()->json(['message' => 'receita cadastrada'], 201);
-        } catch(\Throwable $err) {
-            return response()->json([
-                'message' => $err->getMessage()
-            ], 500);
-        }
-
+        return response()->json(['message' => 'receita cadastrada'], Response::HTTP_CREATED);
     }
 
     public function update()

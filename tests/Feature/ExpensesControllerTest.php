@@ -41,4 +41,12 @@ class ExpensesControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED);
         $this->assertDatabaseHas('expenses', $payload);
     }
+
+    public function testUpdate()
+    {
+
+    }
+
+
+    
 }

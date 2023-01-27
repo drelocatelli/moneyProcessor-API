@@ -27,4 +27,19 @@ class ExpenseRepository
         return $this->model
             ->create($payload);
     }
+
+    public function update(string $id, array $payload)
+    {
+        return $this->model
+                ->where('user_id', $id)
+                ->update($payload);
+    }
+
+    public function delete(string $userId, string $id) 
+    {
+        return $this->model
+            ->where('user_id', $userId)
+            ->where('id', $id)
+            ->delete();
+    }
 }
