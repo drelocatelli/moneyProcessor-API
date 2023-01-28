@@ -11,6 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
+
+    public function __construct(
+        private User $user
+    ) 
+    {}
+    
     public function register(Request $request)
     {
         $request->validate([
@@ -19,7 +25,7 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed'],
         ]);
 
-        $user = User::query()->create([
+        $user = $this->user->query()->create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password'))
@@ -37,11 +43,18 @@ class AuthController extends Controller
             return response()->json(['message' => 'E-mail e senha não conferem'], 401);
         }
 
-        $user = User::where('email', $request->get('email'))->first();
+        $user = $this->user->where('email', $request->get('email'))->first();
 
         return response()->json([
             'message' => 'Usuário autenticado',
             'token' => $user->createToken('API TOKEN')->plainTextToken
         ]);
     }
+
+    public function details(Request $request)
+    {
+
+        return response()->json(Auth::user());
+    }
+    
 }
