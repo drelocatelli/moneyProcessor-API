@@ -14,7 +14,7 @@ class ResumeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date' => 'nullable|date|after:now',
+            'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date'
         ];
     }
