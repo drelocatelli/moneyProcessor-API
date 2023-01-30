@@ -76,9 +76,10 @@ class ResumeRepository
         return [
             'salary' => $this->getSalary($userId),
             'balance' => $balance,
-            'status' => $balance >= 0 ? 'positive' : 'negative',
+            'status' => $balance >= 0 ? 'positivo' : 'negativo',
             'revenues' => $this->getRevenues($payload),
             'expenses' => $this->getExpenses($payload),
+            'payload' => $payload
         ];
     }
     
