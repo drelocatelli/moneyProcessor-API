@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Expenses\Expenses;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\Auth;
 
 class ExpenseRepository
 {

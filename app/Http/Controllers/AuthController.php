@@ -31,10 +31,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->get('password'))
         ]);
 
-        return response()->json([
-            'message' => 'Registro realizado com sucesso!',
-            'token' => $user->createToken('API TOKEN')->plainTextToken
-        ], Response::HTTP_CREATED);
+        $token = $user->createToken('API TOKEN')->plainTextToken;
+
+        return response()
+                ->json([
+                    'message' => 'Registro realizado com sucesso!',
+                    'token' => $token
+                ], Response::HTTP_CREATED)
+                ->withCookie(cookie('auth_token', $token, $minutes = 60));
     }
 
     public function login(LoginRequest $request)
@@ -45,10 +49,13 @@ class AuthController extends Controller
 
         $user = $this->user->where('email', $request->get('email'))->first();
 
+        $token = $user->createToken('API TOKEN')->plainTextToken;
+
         return response()->json([
             'message' => 'Usuário autenticado',
-            'token' => $user->createToken('API TOKEN')->plainTextToken
-        ]);
+            'token' => $token
+        ])
+        ->withCookie(cookie('auth_token', $token, $minutes = 60));
     }
 
     public function details(Request $request)
